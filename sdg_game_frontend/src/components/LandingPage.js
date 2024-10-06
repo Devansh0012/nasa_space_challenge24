@@ -33,7 +33,7 @@ const LandingPage = () => {
           height="100%"
           autoPlay
           loop
-          unmuted
+          muted
           className="rounded-lg"
         />
       </motion.div>
