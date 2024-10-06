@@ -19,7 +19,7 @@ import Puzzle from './components/Puzzle';
 
 const App = () => {
   useEffect(() => {
-    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/';  // Default API URL
+    const apiUrl = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';  // Default API URL
     console.log(apiUrl);  // Check if the API URL is logged correctly
 
     // Make the API request

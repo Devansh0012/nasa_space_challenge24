@@ -1,49 +1,74 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+
+// Function to get the CSRF token from cookies
+const getCSRFToken = () => {
+  let token = null;
+  const cookies = document.cookie.split(';');
+  cookies.forEach(cookie => {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'csrftoken') {
+      token = value;
+    }
+  });
+  return token;
+};
 
 const Register = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');  // Confirm password
-  const [error, setErrorMessage] = useState(null);  // To display error messages
+  const [password2, setPassword2] = useState('');
+  const [error, setErrorMessage] = useState(null);
 
   const handleRegister = async (e) => {
-    e.preventDefault();  // Prevent default form submission behavior
+    e.preventDefault();
 
     const formData = {
-        username: name,
-        email: email,
-        password1: password,
-        password2: password2,
+      username: name,
+      email: email,
+      password1: password,
+      password2: password2,
     };
 
+    console.log('Form data being sent:', formData);
+
+    const csrftoken = getCSRFToken(); // Get CSRF token from cookies
+
     try {
-        // Make sure the method is POST
-        const response = await fetch('/api/register/', {
-            method: 'POST',  // Use POST method here
-            headers: {
-                'Content-Type': 'application/json',  // Set headers to indicate JSON data
-            },
-            body: JSON.stringify(formData),  // Convert form data to JSON string
-        });
+      // Make the POST request to the correct backend URL (Django API running on localhost:8000)
+      const response = await fetch('http://localhost:8000/api/register/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken, // Include CSRF token in the headers
+        },
+        body: JSON.stringify(formData),
+      });
 
-        const data = await response.json();
-        if (data.success) {
-            // Handle success (e.g., navigate to login or show a success message)
-            console.log('Registration successful!');
-        } else {
-            // Handle error response from the backend
-            console.log('Registration failed:', data.errors);
-        }
+      // Log the response status and text
+      console.log('Response status:', response.status);
+      const responseText = await response.text(); // Get the raw response text
+      console.log('Response text:', responseText); // Log it
+
+      // Try to parse JSON if the response was okay
+      const data = response.ok ? JSON.parse(responseText) : { message: responseText };
+      if (response.ok) {
+        console.log('Registration successful!');
+        setName('');
+        setEmail('');
+        setPassword('');
+        setPassword2('');
+        navigate('/login'); // Redirect to login after successful registration
+      } else {
+        setErrorMessage(data.message || 'Registration failed. Please try again.');
+      }
     } catch (error) {
-        console.error('An error occurred:', error);
+      console.error('An error occurred:', error);
+      setErrorMessage('An error occurred. Please try again later.');
     }
-};
-
-
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
