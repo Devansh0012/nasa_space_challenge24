@@ -9,24 +9,24 @@ const Login = () => {
   const [error, setError] = useState(null);  // To display error messages
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8000/login/', {
-        username: email,
-        password: password,
-      });
+  e.preventDefault();
+  try {
+    const response = await axios.post('http://localhost:8000/api/login/', {
+      email: email,  // Update here
+      password: password,
+    });
 
-      if (response.data.success) {
-        // Redirect to the desired page upon successful login
-        navigate('/sdg-info');
-      } else {
-        // Display error messages from the backend
-        setError(response.data.errors);
-      }
-    } catch (err) {
-      setError('Login failed. Please try again.');
+    if (response.data.success) {
+      // Redirect to the desired page upon successful login
+      navigate('/sdg-info');
+    } else {
+      // Display error messages from the backend
+      setError(response.data.message); // Change from errors to message
     }
-  };
+  } catch (err) {
+    setError('Login failed. Please try again.');
+  }
+};
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
