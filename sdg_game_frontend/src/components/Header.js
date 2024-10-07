@@ -1,9 +1,9 @@
 import React from 'react';
-import { Link } from 'react-router-dom'; // Import Link for navigation
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
-    <header className="bg-blue-600 p-4 text-white shadow-md relative z-50"> {/* Ensure high z-index for header */}
+    <header className="bg-blue-600 p-0.5 text-white shadow-md fixed w-full z-50"> {/* Fixed position for better accessibility */}
       <nav className="container mx-auto flex justify-between items-center">
         
         {/* Project Title */}
@@ -12,14 +12,14 @@ const Header = () => {
         </div>
         
         {/* Navigation Links */}
-        <div className="flex space-x-6 items-center">
+        <div className="flex space-x-4 md:space-x-6 items-center">
           
           {/* Dropdown for Satellite Views */}
           <div className="relative group">
-            <button className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md">
+            <button className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md focus:outline-none transition duration-300 ease-in-out">
               Satellite View
             </button>
-            <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-48 z-50"> {/* Ensure high z-index for dropdown */}
+            <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-48 z-50 transition-opacity duration-300 ease-in-out">
               <a href="https://eyes.nasa.gov/apps/earth/#/vital-signs/gravity-field-map/water-storage-monthly" target='_blank' rel="noopener noreferrer" className="block px-4 py-2 hover:bg-gray-200">
                 Water Storage Satellite View
               </a>
@@ -36,17 +36,17 @@ const Header = () => {
           </div>
           
           {/* Map View Button */}
-          <Link to="/map-view" className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md">
+          <Link to="/map-view" className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition duration-300 ease-in-out">
             Map View
           </Link>
           
           {/* Articles Button */}
-          <Link to="/articles" className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md">
+          <Link to="/articles" className="bg-blue-700 hover:bg-blue-800 px-4 py-2 rounded-md transition duration-300 ease-in-out">
             Articles
           </Link>
 
           {/* Start Your Quest Button */}
-          <Link to="/Login" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md">
+          <Link to="/login" className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md transition duration-300 ease-in-out">
             Login
           </Link>
           

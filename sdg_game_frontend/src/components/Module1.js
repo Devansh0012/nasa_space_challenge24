@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import Modal from 'react-modal'; // Import Modal from react-modal
-import poverty from '../assets/videos/Social Equity and Well Being.mp4'
-import health from '../assets/videos/Governance and Ecosystems.mp4'
-import growth from '../assets/videos/Economic Growth and Infrastructure.mp4'
-import climate from '../assets/videos/Environmental Sustainability.mp4'
+import poverty from '../assets/videos/Social Equity and Well Being.mp4';
+import health from '../assets/videos/Governance and Ecosystems.mp4';
+import growth from '../assets/videos/Economic Growth and Infrastructure.mp4';
+import climate from '../assets/videos/Environmental Sustainability.mp4';
 
 const sdgGroups = [
   { title: "No Poverty & Zero Hunger", videoUrl: poverty },
@@ -23,51 +22,83 @@ const Module1 = ({ onComplete }) => {
   };
 
   const [flippedCardIndex, setFlippedCardIndex] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State to control modal
+  const [showMemoryGame, setShowMemoryGame] = useState(false); // Toggle for showing memory game
 
   const handleCardClick = (index) => {
     setFlippedCardIndex(index === flippedCardIndex ? null : index);
   };
 
   const handleMemoryGameClick = () => {
-    setIsModalOpen(true); // Open the modal when button is clicked
+    setShowMemoryGame(true); // Show the memory game when button is clicked
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false); // Close the modal when clicked outside or on close button
-  };
+  if (showMemoryGame) {
+    // If memory game is clicked, show the game
+    return (
+      <div className="p-8 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
+        <div className="p-6 bg-white rounded-lg shadow-lg relative">
+          <button
+            className="absolute top-4 right-4 text-red-500 hover:text-red-600 transition"
+            onClick={() => setShowMemoryGame(false)} // Go back to the main module when clicked
+          >
+            Close Memory Game
+          </button>
+          <h3 className="text-xl font-semibold mb-4 text-center">
+            Memory Game: Test Your SDG Knowledge
+          </h3>
+          <iframe
+            src="/MemoryGame/index.html" // Path to the memory game
+            width="100%"
+            height="600"
+            style={{ border: 'none' }}
+            title="Memory Game"
+            className="rounded-lg shadow-md"
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="p-8">
-      <h2 className="text-2xl font-bold mb-6">Learn About the SDGs</h2>
-      <div className="grid grid-cols-2 gap-6">
+    <div className="p-8 bg-gradient-to-r from-blue-50 to-blue-100 min-h-screen">
+      {/* Title */}
+      <h2 className="text-4xl font-bold text-center text-blue-800 mb-12">
+        Learn About the SDGs
+      </h2>
+
+      {/* SDG Learning Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
         {sdgGroups.map((group, index) => (
           <motion.div
             key={index}
             onClick={() => handleCardClick(index)}
-            className={`relative w-full h-64 bg-white shadow-lg rounded-lg cursor-pointer overflow-hidden ${
-              flippedCardIndex === index ? 'transform rotate-y-180' : ''
+            className={`relative w-full h-72 bg-white shadow-lg rounded-lg overflow-hidden transform transition-transform hover:scale-105 ${
+              flippedCardIndex === index ? 'rotate-y-180' : ''
             }`}
-            style={{ perspective: "1000px" }}
+            style={{ perspective: '1000px' }}
           >
             {/* Front of the card */}
             <motion.div
-              className={`absolute w-full h-full p-6 ${
+              className={`absolute inset-0 flex flex-col justify-center items-center p-6 ${
                 flippedCardIndex === index ? 'hidden' : 'block'
               }`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2, duration: 0.6 }}
             >
-              <h3 className="text-lg font-semibold">{group.title}</h3>
-              <p>Click to learn more!</p>
+              <h3 className="text-lg font-semibold text-blue-700 mb-2">
+                {group.title}
+              </h3>
+              <p className="text-sm text-gray-500">Click to learn more!</p>
             </motion.div>
 
-            {/* Back of the card */}
+            {/* Back of the card (Video) */}
             <motion.div
-              className={`absolute w-full h-full ${
+              className={`absolute inset-0 bg-blue-50 p-4 rounded-lg ${
                 flippedCardIndex === index ? 'block' : 'hidden'
               }`}
             >
-              {/* Video for each SDG */}
-              <video className="w-full h-full" controls>
+              <video className="w-full h-full rounded-lg shadow-md" controls>
                 <source src={group.videoUrl} type="video/mp4" />
                 Your browser does not support video playback.
               </video>
@@ -78,49 +109,28 @@ const Module1 = ({ onComplete }) => {
 
       {/* Complete Button */}
       {flippedCardIndex !== null && (
-        <button
-          className="complete-button bg-green-500 text-white p-4 rounded-lg mt-4"
-          onClick={handleCompleteModule1}
-        >
-          Complete Module 1
-        </button>
+        <div className="text-center mt-12">
+          <button
+            className="complete-button bg-green-600 hover:bg-green-700 text-white text-lg py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out"
+            onClick={handleCompleteModule1}
+          >
+            Complete Module 1
+          </button>
+        </div>
       )}
 
       {/* Memory Game Section */}
-      <div className="mt-8 text-center">
+      <div className="mt-16 text-center">
         {/* Button to toggle the memory game */}
         <motion.button
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={handleMemoryGameClick}
-          className="bg-blue-500 text-white p-4 rounded-lg"
+          className="bg-indigo-600 hover:bg-indigo-700 text-white text-lg py-3 px-8 rounded-lg shadow-lg transition duration-300 ease-in-out"
         >
-          Let's test your learnings
+          Let's Test Your Learnings
         </motion.button>
       </div>
-
-      {/* Modal to display Memory Game */}
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        contentLabel="Memory Game"
-        className="Modal"
-        overlayClassName="Overlay"
-      >
-        <div className="p-4">
-          <button className="close-button text-red-500" onClick={closeModal}>
-            Close
-          </button>
-          <h3 className="text-xl font-semibold mb-4">Memory Game: Test Your SDG Knowledge</h3>
-          <iframe
-            src="/MemoryGame/index.html" // Path to the memory game
-            width="100%"
-            height="600"
-            style={{ border: 'none' }}
-            title="Memory Game"
-          />
-        </div>
-      </Modal>
     </div>
   );
 };

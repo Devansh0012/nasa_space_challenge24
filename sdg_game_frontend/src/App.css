@@ -1,3 +1,5 @@
+
+
 .App {
   text-align: center;
 }
@@ -15,9 +17,8 @@
 
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
+  height: 64px; /* Fixed header height */
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
@@ -35,4 +36,14 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Class to add margin for the landing page */
+.landing-page {
+  margin-top: 64px; /* Adjusted based on header height */
+  height: calc(100vh - 64px); /* Adjusted to take full height minus header */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative; /* Ensures proper positioning of child elements */
 }
