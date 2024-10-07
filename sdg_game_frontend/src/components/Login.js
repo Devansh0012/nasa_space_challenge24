@@ -62,6 +62,14 @@ const Login = () => {
             Login
           </button>
         </form>
+        <div className="mt-4">
+          <button
+            className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+            onClick={() => navigate('/register')}
+          >
+            Register
+          </button>
+        </div>
       </div>
     </div>
   );
