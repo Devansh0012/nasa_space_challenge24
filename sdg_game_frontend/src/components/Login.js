@@ -1,3 +1,4 @@
+// /sdg_game_frontend/src/components/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -6,27 +7,32 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState(null);  // To display error messages
+  const [error, setError] = useState(null);  // Error state to display messages
+  const [loading, setLoading] = useState(false);  // Loading state for button feedback
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  try {
-    const response = await axios.post('http://localhost:8000/api/login/', {
-      email: email,  // Update here
-      password: password,
-    });
+    e.preventDefault();
+    setLoading(true);  // Start loading state
+    try {
+      const response = await axios.post('http://localhost:8000/api/login/', {
+        email: email,  // Pass email and password to backend
+        password: password,
+      });
 
-    if (response.data.success) {
-      // Redirect to the desired page upon successful login
-      navigate('/sdg-info');
-    } else {
-      // Display error messages from the backend
-      setError(response.data.message); // Change from errors to message
+      if (response.data.success) {
+        localStorage.setItem('token', response.data.token);  // Store token
+        navigate('/sdg-info');  // Redirect after successful login
+      }
+       else {
+        // Display error message from backend
+        setError(response.data.message);
+      }
+    } catch (err) {
+      setError('Login failed. Please try again.');
+    } finally {
+      setLoading(false);  // End loading state
     }
-  } catch (err) {
-    setError('Login failed. Please try again.');
-  }
-};
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-white">
@@ -58,8 +64,11 @@ const Login = () => {
               required
             />
           </div>
-          <button className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600">
-            Login
+          <button
+            className="bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600"
+            disabled={loading}  // Disable button while loading
+          >
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
         <div className="mt-4">

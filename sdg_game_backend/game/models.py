@@ -21,3 +21,13 @@ class RegisterForm(UserCreationForm):
 # LoginForm for user login
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(label="Email")
+
+class Progress(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # Link progress to a specific user
+    level_completed = models.IntegerField(default=0)
+    score = models.IntegerField(default=0)
+    badges_earned = models.IntegerField(default=0)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username}'s Progress"

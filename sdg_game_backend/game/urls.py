@@ -13,4 +13,6 @@ urlpatterns = [
     path('api/', include(router.urls)),
     path('api/login/',views.login_view,name='login'),
     path('api/register/',RegisterView.as_view(),name='register'),
+    path('api/progress/', views.get_progress, name='get_progress'),
+    path('api/progress/update/', views.update_progress, name='update_progress'),
 ]
