@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import Progress from "./Progress";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FaSatellite,
   FaUserCircle,
@@ -10,56 +9,90 @@ import {
   FaWater,
   FaCloudRain,
   FaInfoCircle,
+  FaBars,
 } from "react-icons/fa";
+//import './Header.css'; // Assuming we import custom styles for fonts
 
-const Header = ({ isAuthenticated, setIsAuthenticated }) => {
-  // Check if the user is authenticated (runs when the component mounts)
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    setIsAuthenticated(!!token); // Set authentication state based on token existence
-  }, [setIsAuthenticated]);
+const Header = ({ overallProgress }) => {
+  const [menuOpen, setMenuOpen] = useState(false); // For responsive menu on mobile
+  const [dropdownOpen, setDropdownOpen] = useState(false); // For handling dropdown
+  const isAuthenticated = localStorage.getItem("token"); // Check authentication state
+  const navigate = useNavigate(); // For linking to Dashboard
 
-  // Handle logout and remove token
-  const handleLogout = () => {
-    localStorage.removeItem("token"); // Remove token
-    setIsAuthenticated(false); // Update authentication state
-    window.location.reload(); // Optional: Reload page to reflect changes, or use state to rerender components
+  const handleProgressClick = () => {
+    navigate("/dashboard"); // Navigate to Dashboard page
   };
 
   return (
-    <header className="bg-gradient-to-r from-[#3a6351] to-[#d5c6a8] p-4 text-white shadow-md fixed w-full z-50">
+    <header className="bg-white/30 backdrop-blur-md p-4 shadow-lg fixed w-full z-50">
       <nav className="container mx-auto flex justify-between items-center">
+        {/* Logo */}
         <div>
-          <h1 className="text-3xl font-bold tracking-wide">
+          <h1 className="text-3xl font-extrabold tracking-wider text-gray-800 font-poppins">
             🌍 Sustain Academy
           </h1>
         </div>
 
-        <div className="flex space-x-4 md:space-x-6 items-center">
+        {/* Responsive menu button for mobile */}
+        <button
+          className="text-gray-800 text-2xl lg:hidden"
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <FaBars />
+        </button>
+
+        {/* Menu for larger screens */}
+        <div
+          className={`lg:flex items-center lg:space-x-6 space-y-4 lg:space-y-0 transition-all duration-500 ${
+            menuOpen ? "flex flex-col space-y-4" : "hidden lg:flex"
+          }`}
+        >
           {/* My Progress Dropdown */}
-          <div className="relative group">
-            <button className="bg-white text-blue-700 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-200">
+          <div
+            className="relative group"
+            onMouseEnter={() => setDropdownOpen(true)}
+            onMouseLeave={() => setDropdownOpen(false)}
+          >
+            <button
+              className="bg-white/50 backdrop-blur-md text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-full flex items-center space-x-2 transition duration-300 font-medium tracking-wide font-poppins"
+              onClick={handleProgressClick}
+            >
               <FaTrophy />
               <span>My Progress</span>
             </button>
-            <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-40 p-2 transition duration-200 transform -translate-y-2">
-              <Progress />
-            </div>
+            {/* Dropdown for larger screens */}
+            {dropdownOpen && (
+              <div className="absolute z-10 bg-white/70 backdrop-blur-lg text-gray-700 mt-2 rounded-md shadow-lg w-56 p-4 transition-all duration-300 transform -translate-y-2">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="font-semibold text-gray-800">Progress:</span>
+                  <span className="font-bold text-green-600">{overallProgress}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-4">
+                  <div
+                    className="bg-green-500 h-4 rounded-full"
+                    style={{ width: `${overallProgress}%` }}
+                  />
+                </div>
+                <p className="text-sm text-gray-600 mt-2">
+                  Keep up the great work!
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Satellite View Dropdown */}
           <div className="relative group">
-            <button className="bg-white text-blue-700 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-200">
+            <button className="bg-white/50 backdrop-blur-md text-gray-800 hover:bg-gray-200 px-4 py-2 rounded-full flex items-center space-x-2 transition duration-300 font-medium tracking-wide font-poppins">
               <FaSatellite />
               <span>Satellite View</span>
             </button>
-            <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-40 p-2 transition duration-200 transform -translate-y-2">
-              {/* Satellite Links with Icons */}
+            {/* Dropdown content */}
+            <div className="absolute hidden group-hover:block bg-white/70 backdrop-blur-lg text-gray-700 mt-2 rounded-md shadow-lg w-56 p-4 transition-all duration-300 transform -translate-y-2">
               <a
                 href="https://eyes.nasa.gov/apps/earth/#/vital-signs/gravity-field-map/water-storage-monthly"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center px-4 py-2 hover:bg-gray-200 transition duration-200 no-underline"
+                className="flex items-center px-4 py-2 hover:bg-gray-300 transition duration-200 font-poppins"
               >
                 <FaWater className="mr-2" />
                 Water Storage
@@ -68,7 +101,7 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
                 href="https://eyes.nasa.gov/apps/earth/#/satellites/aqua"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center px-4 py-2 hover:bg-gray-200 transition duration-200 no-underline"
+                className="flex items-center px-4 py-2 hover:bg-gray-300 transition duration-200 font-poppins"
               >
                 <FaGlobe className="mr-2" />
                 Aqua Satellite
@@ -77,14 +110,14 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
                 href="https://gpm.nasa.gov/education/articles/nasa-earth-science-water-cycle"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center px-4 py-2 hover:bg-gray-200 transition duration-200 no-underline"
+                className="flex items-center px-4 py-2 hover:bg-gray-300 transition duration-200 font-poppins"
               >
                 <FaInfoCircle className="mr-2" />
                 Info Source
               </a>
               <Link
                 to="/rainforcast-map"
-                className="flex items-center px-4 py-2 hover:bg-gray-200 transition duration-200 no-underline"
+                className="flex items-center px-4 py-2 hover:bg-gray-300 transition duration-200 font-poppins"
               >
                 <FaCloudRain className="mr-2" />
                 Rain Map
@@ -92,33 +125,22 @@ const Header = ({ isAuthenticated, setIsAuthenticated }) => {
             </div>
           </div>
 
-          {/* Conditional Profile/Sign-In Dropdown */}
+          {/* Authentication buttons */}
           {isAuthenticated ? (
-            <div className="relative group">
-              <button className="flex items-center space-x-2 bg-white text-blue-700 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-full transition duration-200">
-                <FaUserCircle />
-                <span>Profile</span>
-              </button>
-              <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-40 p-2 transition duration-200 transform -translate-y-2">
-                <Link
-                  to="/profile"
-                  className="block px-4 py-2 hover:bg-gray-200"
-                >
-                  My Profile
-                </Link>
-                <button
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-200"
-                  onClick={handleLogout}
-                >
-                  <FaSignOutAlt className="mr-2" />
-                  Logout
-                </button>
-              </div>
-            </div>
+            <button
+              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-300 font-semibold tracking-wide font-poppins"
+              onClick={() => {
+                localStorage.removeItem("token"); // Clear authentication token
+                window.location.reload(); // Reload page to reflect changes
+              }}
+            >
+              <FaSignOutAlt />
+              <span>Logout</span>
+            </button>
           ) : (
             <Link
               to="/login"
-              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-200"
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-300 font-semibold tracking-wide font-poppins"
             >
               <FaUserCircle />
               <span>Sign In</span>
