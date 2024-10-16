@@ -30,12 +30,13 @@ const SignUp = () => {
     e.preventDefault();
 
     const formData = {
-      username: firstName + lastName,  // Or some concatenation logic
+      first_name: firstName,
+      last_name: lastName,
+      school_name: schoolName,
       email: email,
       password1: password,
       password2: password2,
     };
-    
 
     const csrftoken = getCSRFToken(); // Get CSRF token from cookies
 
@@ -61,7 +62,7 @@ const SignUp = () => {
         setEmail("");
         setPassword("");
         setPassword2("");
-        navigate("/login/"); // Redirect to login after successful registration
+        navigate("/login"); // Redirect to login after successful registration
       } else {
         setErrorMessage(
           data.message || "Registration failed. Please try again."
@@ -74,7 +75,10 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white relative">
+    <div
+      className="flex items-center justify-center min-h-screen bg-white relative"
+      style={{ backgroundColor: "#EAE8E3" }}
+    >
       {/* Inline CSS Styles */}
       <style>
         {`

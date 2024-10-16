@@ -1,111 +1,91 @@
 # /sdg_game_backend/game/views.py
 
-from django.contrib.auth import login, authenticate
-from django.contrib.auth.models import User
-from django.http import JsonResponse
-from rest_framework import status, serializers, generics
+from django.shortcuts import render
+from django.contrib.auth import login, authenticate, logout
+from rest_framework import status, generics
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework.decorators import api_view
-from django.views.decorators.csrf import csrf_exempt
-from .models import Progress
+from .serializers import RegisterSerializer, LoginSerializer
+from django.db import transaction
+from .models import Profile, Progress
 from django.contrib.auth.decorators import login_required
-import json
-
-# Register Serializer
-class RegisterSerializer(serializers.ModelSerializer):
-    password1 = serializers.CharField(write_only=True)
-    password2 = serializers.CharField(write_only=True)
-
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
-
-    def validate(self, attrs):
-        if attrs['password1'] != attrs['password2']:
-            raise serializers.ValidationError("Passwords do not match")
-        if User.objects.filter(username=attrs['username']).exists():
-            raise serializers.ValidationError("Username already exists")
-        if User.objects.filter(email=attrs['email']).exists():
-            raise serializers.ValidationError("Email already exists")
-        return attrs
-
-    def create(self, validated_data):
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            email=validated_data['email'],
-            password=validated_data['password1']
-        )
-        return user
-
+from django.http import JsonResponse
 
 # Register API view
 class RegisterView(generics.CreateAPIView):
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save()
+            # Create Progress for the new user
+            Progress.objects.create(user=user)
             return Response({
-                'username': serializer.validated_data['username'],
-                'email': serializer.validated_data['email'],
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'email': user.email,
                 'message': 'User registered successfully.'
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 # Login API view
-@csrf_exempt
-@api_view(['POST'])
-def login_view(request):
-    try:
-        data = json.loads(request.body)
-        email = data.get('email')
-        password = data.get('password')
+class LoginView(generics.GenericAPIView):
+    permission_classes = [AllowAny]  # Allow anyone to access the login endpoint
+    serializer_class = LoginSerializer
 
-        try:
-            # Find user by email
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return JsonResponse({'success': False, 'message': 'Invalid email or user not found'}, status=401)
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+            
+            # Try to authenticate the user with email and password
+            user = authenticate(request, username=email, password=password)
 
-        user = authenticate(request, username=user.username, password=password)
-
-        if user is not None:
-            login(request, user)
-            return JsonResponse({'success': True, 'message': 'Login successful'})
+            if user is not None:
+                # Log in the user and create a session
+                login(request, user)
+                
+                # Return successful response with user info
+                return Response({
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email,
+                    'message': 'Logged in successfully.',
+                    'success': True,  # Add this to check for success on frontend
+                }, status=status.HTTP_200_OK)
+            else:
+                # Invalid credentials
+                return Response({'error': 'Invalid credentials', 'success': False}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return JsonResponse({'success': False, 'message': 'Invalid password'}, status=401)
+            # Invalid data from the serializer
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    except json.JSONDecodeError:
-        return JsonResponse({'success': False, 'message': 'Invalid JSON format'}, status=400)
 
-    except Exception as e:
-        return JsonResponse({'success': False, 'message': str(e)}, status=500)
 
+# Logout API view
+class LogoutView(generics.GenericAPIView):
+    def post(self, request, *args, **kwargs):
+        logout(request)
+        return Response({"message": "Logged out successfully."}, status=status.HTTP_200_OK)
+
+
+# View for retrieving and updating user progress
 @login_required
-def get_progress(request):
-    user = request.user
-    progress = Progress.objects.get(user=user)
-    return JsonResponse({
-        'level_completed': progress.level_completed,
-        'score': progress.score,
-        'badges_earned': progress.badges_earned,
-        'last_updated': progress.last_updated,
-    })
-
-@csrf_exempt
-@login_required
-def update_progress(request):
-    if request.method == 'POST':
-        user = request.user
-        data = json.loads(request.body)
-        progress, created = Progress.objects.get_or_create(user=user)
-        progress.level_completed = data.get('level_completed', progress.level_completed)
-        progress.score = data.get('score', progress.score)
-        progress.badges_earned = data.get('badges_earned', progress.badges_earned)
+def progress(request):
+    progress = Progress.objects.get(user=request.user)
+    if request.method == "GET":
+        return JsonResponse({
+            "level_completed": progress.level_completed,
+            "score": progress.score,
+            "badges_earned": progress.badges_earned,
+        })
+    elif request.method == "POST":
+        progress.level_completed = request.POST.get("level_completed", progress.level_completed)
+        progress.score = request.POST.get("score", progress.score)
+        progress.badges_earned = request.POST.get("badges_earned", progress.badges_earned)
         progress.save()
-        return JsonResponse({'message': 'Progress updated successfully'})
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+        return JsonResponse({"message": "Progress updated successfully."}, status=status.HTTP_200_OK)

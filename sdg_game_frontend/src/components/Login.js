@@ -6,7 +6,8 @@ import axios from "axios";
 import personImage from "../pages/cardImages/person.png";
 import plantImage from "../pages/cardImages/flower.png";
 
-const Login = () => {
+const Login = ({ setIsAuthenticated }) => {
+  // Add setIsAuthenticated as a prop
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,20 +23,30 @@ const Login = () => {
         password,
       });
 
-      if (response.data.success) {
-        navigate("/sdg-info");
+      console.log(response); // Check the response
+
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token); // Save token
+        setIsAuthenticated(true); // Update the authentication state
+        navigate("/"); // Redirect to the landing page
       } else {
-        setError(response.data.message);
+        setError(response.data.message || "Login failed. Please try again.");
       }
     } catch (err) {
-      setError("Login failed. Please try again.");
+      console.error(err); // Log the error
+      setError(
+        err.response?.data?.message || "Login failed. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white relative">
+    <div
+      className="flex items-center justify-center min-h-screen bg-white relative"
+      style={{ backgroundColor: "#EAE8E3" }}
+    >
       {/* Inline CSS Styles for Animations */}
       <style>
         {`

@@ -353,9 +353,9 @@ const LandingPage = () => {
 
 
 return (
-  <div className="flex flex-col min-h-screen bg-gray-100 p-6">
+  <div className="flex flex-col min-h-screen bg-gray-100 p-6" style={{ backgroundColor: "#EAE8E3" }}>
     {/* SDG Cards Container */}
-    <div className="flex flex-wrap justify-center items-start gap-6">
+    <div className="flex flex-wrap justify-center items-start gap-6 mt-16" >
       {sdgCards.map((sdg, index) => (
         <motion.div
           key={index}

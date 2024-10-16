@@ -1,51 +1,50 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import VideoSection from "./section1/videoSection";
+import NearVideoSection from "./section1/nearVideoContent"; // Import your VideoSection
+import ModulesSection from "./moduleSection";
+import { motion } from "framer-motion";
+import Footer from "./Footer"; // Import framer-motion
 
 const LandingPage = () => {
-  const navigate = useNavigate();
-
-  const handleSubmit = () => {
-    // Redirect to Module 1 (SDG Info)
-    navigate('/sdg-info');
-  };
-
   return (
-    <div className="relative flex items-center justify-center min-h-screen w-screen bg-gradient-to-r from-blue-200 to-blue-100 overflow-hidden">
-      {/* Fullscreen background image */}
-      <img
-        src="/images/girlPoint.jpg" // Path to the girl image in the public folder
-        alt="Girl pointing to whiteboard"
-        className="absolute inset-0 w-full h-100 object-cover z-0" // Keep it to cover the entire screen
-      />
+    <motion.div
+      className="min-h-screen flex flex-col pt-24"
+      style={{ backgroundColor: "#EAE8E3" }}
+      initial={{ opacity: 0 }} // Animation
+      animate={{ opacity: 1 }} // Animation
+      transition={{ duration: 0.5 }} // Animation duration
+    >
+      <h1 className="text-4xl font-bold text-center text-blue-700 mt-5 mb-2">
+        Shape a Sustainable Tomorrow – Learn & Lead
+      </h1>
+      <h2 className="text-xl text-center text-gray-700 mb-8">
+        Discover your role in transforming our planet for the better!
+      </h2>
+      <div className="flex flex-col md:flex-row justify-center items-start w-full px-4 flex-grow">
+        <div className="w-full md:w-1/2 flex justify-center md:pr-4 flex-grow">
+          <div className="w-full flex justify-center items-center h-full mt-6">
+            <VideoSection />
+          </div>
+        </div>
 
-      {/* Video Box positioned on the whiteboard */}
-      <motion.div
-        className="absolute w-full max-w-md h-auto z-10"
-        style={{ top: '30%', left: '15%', transform: 'translate(-50%, -50%)' }} // Centered on the whiteboard
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1.3 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-      >
-        <video
-          src="/videos/animatedVideo.mp4" // Path to the video in the public folder
-          className="w-full h-auto rounded-lg shadow-lg border-4 border-white"
-          autoPlay
-          loop
-          muted
-        />
-      </motion.div>
-
-      {/* Ready to Learn More button */}
-      <div className="absolute bottom-10 z-10 flex justify-center w-full">
-        <button
-          className="bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold py-2 px-6 rounded-lg shadow-md transition duration-300 ease-in-out"
-          onClick={handleSubmit}
-        >
-          Ready to Learn More
-        </button>
+        <div className="w-full md:w-1/2 flex justify-center md:pl-4 flex-grow">
+          <div className="w-full max-w-4xl h-full mt-10">
+            <NearVideoSection />
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div style={{ backgroundColor: "#EAE8E3", padding: "2rem" }}>
+        <ModulesSection />
+        {/* Added margin-top for space between sections */}
+        <div className="flex justify-center mt-8">
+          <button className="bg-gradient-to-r from-[#20b020] to-[#1d9e1d] text-white font-semibold text-lg px-6 py-3 rounded shadow-lg hover:shadow-xl hover:scale-105 transition-transform duration-300">
+            Join The Movement
+          </button>
+        </div>
+      </div>
+      <Footer />
+    </motion.div>
   );
 };
 

@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
 import Progress from "./Progress";
-import RainForcastMap from "./RainForcastMap";
 import {
   FaSatellite,
   FaUserCircle,
@@ -13,8 +12,19 @@ import {
   FaInfoCircle,
 } from "react-icons/fa";
 
-const Header = () => {
-  const isAuthenticated = localStorage.getItem("token"); // Check authentication state
+const Header = ({ isAuthenticated, setIsAuthenticated }) => {
+  // Check if the user is authenticated (runs when the component mounts)
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    setIsAuthenticated(!!token); // Set authentication state based on token existence
+  }, [setIsAuthenticated]);
+
+  // Handle logout and remove token
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Remove token
+    setIsAuthenticated(false); // Update authentication state
+    window.location.reload(); // Optional: Reload page to reflect changes, or use state to rerender components
+  };
 
   return (
     <header className="bg-gradient-to-r from-[#3a6351] to-[#d5c6a8] p-4 text-white shadow-md fixed w-full z-50">
@@ -33,7 +43,7 @@ const Header = () => {
               <span>My Progress</span>
             </button>
             <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-40 p-2 transition duration-200 transform -translate-y-2">
-              <Progress /> {/* Display the Progress component here */}
+              <Progress />
             </div>
           </div>
 
@@ -82,25 +92,36 @@ const Header = () => {
             </div>
           </div>
 
-          {/* Conditional Logout/Login Button */}
+          {/* Conditional Profile/Sign-In Dropdown */}
           {isAuthenticated ? (
-            <button
-              className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-200"
-              onClick={() => {
-                localStorage.removeItem("token"); // Clear authentication token
-                window.location.reload(); // Reload page to reflect changes
-              }}
-            >
-              <FaSignOutAlt />
-              <span>Logout</span>
-            </button>
+            <div className="relative group">
+              <button className="flex items-center space-x-2 bg-white text-blue-700 hover:bg-blue-700 hover:text-white px-4 py-2 rounded-full transition duration-200">
+                <FaUserCircle />
+                <span>Profile</span>
+              </button>
+              <div className="absolute hidden group-hover:block bg-white text-black mt-2 rounded-md shadow-lg w-40 p-2 transition duration-200 transform -translate-y-2">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 hover:bg-gray-200"
+                >
+                  My Profile
+                </Link>
+                <button
+                  className="block w-full text-left px-4 py-2 hover:bg-gray-200"
+                  onClick={handleLogout}
+                >
+                  <FaSignOutAlt className="mr-2" />
+                  Logout
+                </button>
+              </div>
+            </div>
           ) : (
             <Link
               to="/login"
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-full flex items-center space-x-2 transition duration-200"
             >
               <FaUserCircle />
-              <span>SignIn</span>
+              <span>Sign In</span>
             </Link>
           )}
         </div>
