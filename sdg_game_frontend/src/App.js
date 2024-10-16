@@ -16,9 +16,15 @@ import Login from "./components/Login"; // Import Login page
 import Register from "./components/Register";
 import { SDG1Quiz } from "./components/QuizModule";
 import Puzzle from "./components/Puzzle";
+import Dashboard from "./components/Dashboard"; // Import Dashboard component
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false); // Create authentication state
+  const [progress, setProgress] = useState({
+    module1: false,
+    module2: false,
+    module3: false,
+  });
 
   useEffect(() => {
     const apiUrl =
@@ -36,23 +42,24 @@ const App = () => {
       });
   }, []);
 
-  const [progress, setProgress] = useState({
-    module1: false,
-    module2: false,
-    module3: false,
-  });
-
   const updateProgress = (module) => {
     setProgress((prevProgress) => ({ ...prevProgress, [module]: true }));
+  };
+
+  // Calculate overall progress in percentage
+  const calculateOverallProgress = () => {
+    const completedModules = Object.values(progress).filter(Boolean).length;
+    return (completedModules / 3) * 100; // Assuming there are 3 modules
   };
 
   return (
     <Router>
       <div>
-        {/* Pass isAuthenticated and setIsAuthenticated to Header */}
+        {/* Pass isAuthenticated, setIsAuthenticated, and overallProgress to Header */}
         <Header
           isAuthenticated={isAuthenticated}
           setIsAuthenticated={setIsAuthenticated}
+          overallProgress={calculateOverallProgress()} // Pass overall progress to Header
         />
 
         <Routes>
@@ -102,13 +109,18 @@ const App = () => {
           <Route
             path="/login"
             element={<Login setIsAuthenticated={setIsAuthenticated} />}
-          />{" "}
-          {/* Pass setIsAuthenticated */}
+          />
           {/* Register Route */}
           <Route path="/register" element={<Register />} />
+          {/* SDG1 Quiz */}
           <Route path="/sdg1-quiz" element={<SDG1Quiz />} />
-          <Route path="/puzzle" element={<Puzzle />} />{" "}
           {/* Puzzle game route */}
+          <Route path="/puzzle" element={<Puzzle />} />
+          {/* Dashboard Route */}
+          <Route
+            path="/dashboard"
+            element={<Dashboard progress={progress} overallProgress={calculateOverallProgress()} />}
+          />
         </Routes>
       </div>
     </Router>
