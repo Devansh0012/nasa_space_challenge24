@@ -30,6 +30,10 @@ DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "nasa-space-challenge24.onrender.com"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://nasa-space-challenge24.vercel.app",
+    "https://nasa-space-challenge24.onrender.com",
+]
 
 # Application definition
 
