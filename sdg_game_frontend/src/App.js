@@ -28,7 +28,7 @@ const App = () => {
 
   useEffect(() => {
     const apiUrl =
-      process.env.REACT_APP_API_URL || "http://localhost:8000/api/"; // Default API URL
+      process.env.REACT_APP_API_URL || "https://nasa-space-challenge24.onrender.com/api/"; // Default API URL
     console.log(apiUrl); // Check if the API URL is logged correctly
 
     // Make the API request

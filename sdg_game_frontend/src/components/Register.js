@@ -42,7 +42,7 @@ const SignUp = () => {
 
     try {
       // Make the POST request to the correct backend URL (Django API running on localhost:8000)
-      const response = await fetch("http://localhost:8000/api/register/", {
+      const response = await fetch("https://nasa-space-challenge24.onrender.com/api/register/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

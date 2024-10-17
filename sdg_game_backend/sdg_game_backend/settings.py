@@ -28,7 +28,7 @@ SECRET_KEY = "django-insecure-nm@o)3aq^786)yi))dp1@)y^=-x50%cp9tq=8miphmwysxc!4(
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "nasa-space-challenge24.onrender.com"]
 
 
 # Application definition
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://nasa-space-challenge24.vercel.app",
+    "https://nasa-space-challenge24.onrender.com",
 ]
 
 

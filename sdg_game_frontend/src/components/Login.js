@@ -18,7 +18,7 @@ const Login = ({ setIsAuthenticated }) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await axios.post("http://localhost:8000/api/login/", {
+      const response = await axios.post("https://nasa-space-challenge24.onrender.com/api/login/", {
         email,
         password,
       });
