@@ -1,0 +1,1 @@
+web: gunicorn sdg_game_backend.wsgi

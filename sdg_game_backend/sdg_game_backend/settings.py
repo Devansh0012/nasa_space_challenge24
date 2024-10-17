@@ -25,7 +25,7 @@ SECRET_KEY = "django-insecure-nm@o)3aq^786)yi))dp1@)y^=-x50%cp9tq=8miphmwysxc!4(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["nasa-space-challenge24.vercel.app/", "localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 
 # Application definition
