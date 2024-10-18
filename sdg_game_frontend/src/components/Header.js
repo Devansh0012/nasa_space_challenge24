@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import logo from "../pages/cardImages/logo.png";
 import {
   FaSatellite,
   FaUserCircle,
@@ -27,11 +28,17 @@ const Header = ({ overallProgress }) => {
     <header className="bg-white/30 backdrop-blur-md p-4 shadow-lg fixed w-full z-50">
       <nav className="container mx-auto flex justify-between items-center">
         {/* Logo */}
-        <div>
+        <div className="flex items-center">
+          <img
+            src= {logo}
+            alt="Sustain Academy Logo"
+            className="h-10 w-10 mr-2 mt-1"
+          />
           <h1 className="text-3xl font-extrabold tracking-wider text-gray-800 font-poppins">
-            🌍 Sustain Academy
+            Sustain Academy
           </h1>
         </div>
+
 
         {/* Responsive menu button for mobile */}
         <button
